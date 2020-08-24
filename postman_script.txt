@@ -1,0 +1,52 @@
+var current_timestamp = new Date();
+console.log('Starting  at:' + current_timestamp.toISOString())
+
+i=1;
+console.log('This is the first iteration.')
+i++;
+
+//maximum allowed value according to requirements 
+maximumResponseTime = 1000;
+
+//number of sent requests according to requirements 
+iterations = 121;
+
+//delay between requests according to requirements 
+delay = 100;
+
+//responseTimes is an array for collecting response time values
+responseTimes = [];
+
+
+
+function sendRequest() {
+    pm.sendRequest({
+        url: "https://xxxxxxxxxxx/",
+        method: 'GET'
+    }, function (err, res) { 
+        if (i < iterations + 1) {
+                pm.test("Check response when requests less than " + iterations, function (){
+                pm.expect(err).to.equal(null);
+                pm.expect(res).to.have.property('code', 200);
+                });
+
+            console.log('This is iteration ' + i)
+            i++;
+            setTimeout(sendRequest, delay);
+        } 
+        else {
+            console.log('Exceeded the iterations. This is iteration: ' + i)
+
+            var current_timestamp = new Date();
+            console.log('Exceeded  at:' + current_timestamp.toISOString())
+
+                pm.test("Check response when exceeded the " + iterations + " requests.", function (){
+                pm.expect(err).to.equal(null);
+                pm.expect(res).to.have.property('code', 400);
+                });
+        }
+    });
+}
+sendRequest();
+
+
